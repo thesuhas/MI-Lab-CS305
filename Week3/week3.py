@@ -5,7 +5,6 @@ Assume df is a pandas dataframe object of the dataset given
 import numpy as np
 import pandas as pd
 import math
-import time
 import random
 
 

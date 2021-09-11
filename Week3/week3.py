@@ -5,6 +5,7 @@ Assume df is a pandas dataframe object of the dataset given
 import numpy as np
 import pandas as pd
 import math
+import time
 import random
 
 
@@ -13,11 +14,8 @@ import random
 # output:int/float
 def get_entropy_of_dataset(df):
 
-    # Unique elements of class
-    unique = df[df.columns[-1]].unique()
-
     # Array for value of classes
-    count = [len(df[df[df.columns[-1]] == i]) for i in unique]
+    count = [len(df[df[df.columns[-1]] == i]) for i in df[df.columns[-1]].unique()]
     total = len(df)
 
     # Convert array into fractions
@@ -43,21 +41,25 @@ def get_avg_info_of_attribute(df, attribute):
     # Calculate entropy for each value that the attribute takes
     entropy = dict()
 
+    # For each value that the attribute takes, calculate entropy
     for i in new[attribute].unique():
         entropy[i] = get_entropy_of_dataset(new[new[attribute] == i])
     
     avg_info = 0
 
+    # For each value that the attribute takes
     for i in entropy:
+        # Get df for each value that the attribute takes
         temp = new[new[attribute] == i]
 
-        # Get value for every class
+        # Get attribute == value for each target class
         vals = [len(temp[temp[temp.columns[-1]] == u]) for u in new[new.columns[-1]].unique()]
 
-        # Get the frac
+        # Get the frac for each value that the attribute takes
         frac = sum(vals) / len(df)
 
         avg_info += (frac * entropy[i])
+
     return avg_info
 
 
@@ -84,27 +86,12 @@ def get_selected_attribute(df):
     ig_vals = dict()
 
     for i in df.columns[:-1]:
+        # Get information gain for each attribute
         ig = get_information_gain(df, i)
-        ig_vals[i] =ig
+        ig_vals[i] = ig
+        # If it is higher than current max ig
         if ig > max:
             max = ig
             col = i
     
     return (ig_vals, col)
-        
-
-outlook = 'overcast,overcast,overcast,overcast,rainy,rainy,rainy,rainy,rainy,sunny,sunny,sunny,sunny,sunny'.split(
-        ',')
-temp = 'hot,cool,mild,hot,mild,cool,cool,mild,mild,hot,hot,mild,cool,mild'.split(
-        ',')
-humidity = 'high,normal,high,normal,high,normal,normal,normal,high,high,high,high,normal,normal'.split(
-        ',')
-windy = 'FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,TRUE,FALSE,TRUE,FALSE,FALSE,TRUE'.split(
-        ',')
-play = 'yes,yes,yes,yes,yes,yes,no,yes,no,no,no,no,yes,yes'.split(',')
-dataset = {'outlook': outlook, 'temp': temp,
-               'humidity': humidity, 'windy': windy, 'play': play}
-df = pd.DataFrame(dataset, columns=[
-                      'outlook', 'temp', 'humidity', 'windy', 'play'])
-
-print(get_selected_attribute(df))

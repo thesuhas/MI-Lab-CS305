@@ -82,8 +82,11 @@ class KNN:
         neigh_idx = []
 
         for i in range(len(distances)):
+            # Zip them to form tuple of (dist, idx). Sorted sorts by first element of tuple by default
             mapp = sorted(zip(distances[i], [j for j in range(len(distances[i]))]))
+            # Extracts distances of first k neighbours
             neigh_dists.append([mapp[j][0] for j in range(len(mapp[:self.k_neigh]))])
+            # Extracts indexes of first k neighbours
             neigh_idx.append([mapp[j][1] for j in range(len(mapp[:self.k_neigh]))])
 
         return [neigh_dists, neigh_idx]
@@ -140,6 +143,7 @@ class KNN:
         count = 0
 
         for i in range(len(pred)):
+            # If it was a correct prediction, add it to the number of correctly predicter inputs
             if pred[i] == y[i]:
                 count += 1
         

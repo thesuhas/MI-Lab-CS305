@@ -121,7 +121,6 @@ class Tensor:
                 c = a+b
                 Gradient to a and b
         """
-        g = []
         grad1 = None
         grad2 = None
         # Set g to one if no previous gradient
@@ -154,7 +153,7 @@ class Tensor:
         """
         g = []
         # Set g to one if no previous gradient
-        if gradients == None:
+        if gradients is None:
             g = np.ones(self.shape)
         else:
             g = gradients
@@ -164,9 +163,9 @@ class Tensor:
         
         # If requires grad is true
         if self.history[1].requires_grad:
-            self.history[1].grad = grad1
+            self.history[1].grad += grad1
         if self.history[2].requires_grad:
-            self.history[2].grad = grad2
+            self.history[2].grad += grad2
         return (grad1, grad2)
 
     def backward(self, gradients=None):
@@ -201,8 +200,8 @@ class Tensor:
 
             # Propagate gradients
             if gradients is not None:
-                grad1 *= gradients
-                grad2 *= gradients
+                grad1 = np.matmul(gradients, grad1)
+                grad2 = np.matmul(gradients, grad2)
             # Do recursion
             self.history[1].backward(grad1)
             self.history[2].backward(grad2)
